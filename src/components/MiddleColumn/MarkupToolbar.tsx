@@ -46,7 +46,7 @@ export const MarkupToolbar: React.FC = () => {
   ];
 
   return (
-    <div className="w-full bg-[#090d16] border border-slate-800/80 rounded-xl p-2 flex items-center justify-between text-xs select-none shadow-md">
+    <div className="w-full bg-[#090d16] border border-slate-800/80 rounded-xl p-2 flex items-center justify-between gap-1 sm:gap-2 text-xs select-none shadow-md overflow-x-auto">
       {/* Drawing mode & Color Palette */}
       <div className="flex items-center space-x-2">
         <span className="text-[11px] font-semibold text-slate-400 flex items-center space-x-1">

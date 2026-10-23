@@ -38,8 +38,9 @@ export const EvalBar: React.FC = () => {
               <Brain className="w-3.5 h-3.5" />
             </span>
             <div className="text-[11px] text-slate-300">
-              <span className="font-semibold text-emerald-400">Independent Thinking Mode</span>
-              <span className="text-slate-400 hidden sm:inline ml-1.5">• Engine paused for human strategic judgment</span>
+              <span className="font-semibold text-emerald-400 sm:hidden">Independent Mode</span>
+              <span className="font-semibold text-emerald-400 hidden sm:inline">Independent Thinking Mode</span>
+              <span className="text-slate-400 hidden sm:inline ml-1.5">• Engine paused for human judgment</span>
             </div>
           </div>
           <button

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef, useState, useEffect } from 'react';
 import { Chessboard } from 'react-chessboard';
 import { useChessStudy } from '../../context/ChessStudyContext';
 import { ArrowColor } from '../../types/chess';
@@ -20,6 +20,39 @@ export const ChessBoardView: React.FC = () => {
     moveHistory,
     currentPly,
   } = useChessStudy();
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [boardWidth, setBoardWidth] = useState<number>(460);
+  const [selectedSquare, setSelectedSquare] = useState<string | null>(null);
+
+  // Measure container width responsively for crisp mobile & desktop rendering
+  useEffect(() => {
+    const updateSize = () => {
+      if (containerRef.current) {
+        const clientWidth = containerRef.current.clientWidth;
+        if (clientWidth > 0) {
+          setBoardWidth(clientWidth);
+        }
+      }
+    };
+
+    updateSize();
+
+    // ResizeObserver for instant container-aware resize (window resize, orientation change, layout shift)
+    if (typeof ResizeObserver !== 'undefined' && containerRef.current) {
+      const observer = new ResizeObserver(() => updateSize());
+      observer.observe(containerRef.current);
+      return () => observer.disconnect();
+    }
+
+    window.addEventListener('resize', updateSize);
+    return () => window.removeEventListener('resize', updateSize);
+  }, []);
+
+  // Clear selected tap-to-move square when FEN or ply changes
+  useEffect(() => {
+    setSelectedSquare(null);
+  }, [currentFen, currentPly]);
 
   // Active theme definition from BOARD_THEMES
   const currentTheme = useMemo(() => {
@@ -58,6 +91,15 @@ export const ChessBoardView: React.FC = () => {
       };
     });
 
+    // Show selected square for tap-to-move on mobile
+    if (selectedSquare) {
+      styles[selectedSquare] = {
+        backgroundColor: 'rgba(16, 185, 129, 0.45)',
+        borderRadius: '4px',
+        boxShadow: 'inset 0 0 0 3px rgba(16, 185, 129, 0.95)',
+      };
+    }
+
     // Show piece highlight during Replay Practice if hint level >= 1
     if (replayPracticeState.isActive && replayPracticeState.hintLevel >= 1) {
       const target = moveHistory[currentPly];
@@ -71,18 +113,40 @@ export const ChessBoardView: React.FC = () => {
     }
 
     return styles;
-  }, [activeSquares, replayPracticeState.isActive, replayPracticeState.hintLevel, moveHistory, currentPly]);
+  }, [activeSquares, selectedSquare, replayPracticeState.isActive, replayPracticeState.hintLevel, moveHistory, currentPly]);
 
   // Handle piece drop (for Replay Practice and Guess the Plan modes)
   const onPieceDrop = (sourceSquare: string, targetSquare: string): boolean => {
+    setSelectedSquare(null);
     if (replayPracticeState.isActive) {
       return submitReplayMove(sourceSquare, targetSquare);
     }
     if (guessPlanState.isActive) {
       return submitGuessPlanMove(sourceSquare, targetSquare);
     }
-    // In normal mode, free move or study
     return false;
+  };
+
+  // Tap-to-move / Click-to-move support (especially convenient for mobile touch)
+  const onSquareClick = (square: string) => {
+    if (selectedSquare) {
+      if (selectedSquare === square) {
+        // Deselect if tapping same square
+        setSelectedSquare(null);
+        return;
+      }
+      // Attempt move from selectedSquare to square
+      const moved = onPieceDrop(selectedSquare, square);
+      if (moved) {
+        setSelectedSquare(null);
+        return;
+      }
+    }
+
+    // Otherwise select the square to start a move
+    if (replayPracticeState.isActive || guessPlanState.isActive) {
+      setSelectedSquare(square);
+    }
   };
 
   // Handle right-click on squares for highlighting
@@ -113,11 +177,13 @@ export const ChessBoardView: React.FC = () => {
 
   return (
     <div
-      className={`relative flex items-center justify-center w-full max-w-[540px] xl:max-w-[580px] aspect-square mx-auto shadow-2xl rounded-2xl overflow-hidden border border-slate-700/60 bg-[#090d16] transition-all duration-300 ${
+      ref={containerRef}
+      className={`relative flex items-center justify-center w-full max-w-[min(100%,540px)] xl:max-w-[580px] aspect-square mx-auto shadow-2xl rounded-2xl overflow-hidden border border-slate-700/60 bg-[#090d16] transition-all duration-300 touch-none select-none ${
         currentTheme.borderClass || ''
       }`}
     >
       <Chessboard
+        boardWidth={boardWidth}
         position={currentFen}
         boardOrientation={orientation}
         customDarkSquareStyle={{ backgroundColor: currentTheme.darkBg }}
@@ -126,6 +192,7 @@ export const ChessBoardView: React.FC = () => {
         customSquareStyles={formattedSquareStyles}
         customArrowColor={currentArrowColorHex}
         onPieceDrop={onPieceDrop}
+        onSquareClick={onSquareClick}
         onSquareRightClick={onSquareRightClick}
         animationDuration={200}
         showBoardNotation={true}

@@ -57,7 +57,7 @@ export const StrategicNotebook: React.FC = () => {
   };
 
   return (
-    <aside className="w-full lg:w-80 xl:w-96 flex flex-col border-l border-slate-800 bg-[#090d16] h-[calc(100vh-53px)] select-none shrink-0 overflow-hidden">
+    <aside className="w-full lg:w-80 xl:w-96 flex flex-col border-l border-slate-800 bg-[#090d16] h-[calc(100vh-109px)] lg:h-[calc(100vh-53px)] select-none shrink-0 overflow-hidden">
       {/* Position Header Banner */}
       <div className="p-3 border-b border-slate-800 bg-[#090d16] space-y-2">
         <div className="flex items-center justify-between">
@@ -170,7 +170,7 @@ export const StrategicNotebook: React.FC = () => {
       </div>
 
       {/* Scrollable Tab Body */}
-      <div className="flex-1 overflow-y-auto p-3 space-y-4">
+      <div className="flex-1 overflow-y-auto p-3 pb-24 lg:pb-4 space-y-4">
         {activeTab === 'notes' ? (
           <>
             {/* Thematic Tags */}

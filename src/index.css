@@ -38,3 +38,8 @@
 .animate-pulse-subtle {
   animation: move-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
+
+/* Safe area inset for modern mobile touch devices */
+.safe-area-bottom {
+  padding-bottom: max(0.35rem, env(safe-area-inset-bottom, 0px));
+}

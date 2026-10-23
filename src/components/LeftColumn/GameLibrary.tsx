@@ -185,7 +185,7 @@ export const GameLibrary: React.FC<GameLibraryProps> = ({
       </div>
 
       {/* Game Cards List */}
-      <div className="flex-1 overflow-y-auto p-2 space-y-2">
+      <div className="flex-1 overflow-y-auto p-2 pb-10 lg:pb-2 space-y-2">
         {filteredGames.length === 0 ? (
           <div className="p-6 text-center text-xs text-slate-500 space-y-2">
             <p>No games found matching criteria.</p>

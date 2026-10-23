@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useChessStudy } from '../../context/ChessStudyContext';
 import { GameMetadata } from './GameMetadata';
 import { MoveList } from './MoveList';
@@ -9,23 +9,36 @@ interface LeftColumnProps {
   onOpenImport: () => void;
   onOpenNewGame: () => void;
   onOpenEditGame: (gameId?: string) => void;
+  forceTab?: 'moves' | 'library';
+  onSelectGame?: () => void;
 }
 
 export const LeftColumn: React.FC<LeftColumnProps> = ({
   onOpenImport,
   onOpenNewGame,
   onOpenEditGame,
+  forceTab,
+  onSelectGame,
 }) => {
   const { games, selectGame, currentGame } = useChessStudy();
   const [activeTab, setActiveTab] = useState<'moves' | 'library'>('moves');
 
+  useEffect(() => {
+    if (forceTab) {
+      setActiveTab(forceTab);
+    }
+  }, [forceTab]);
+
   const handleSelectGameAndStudy = (gameId: string) => {
     selectGame(gameId);
     setActiveTab('moves');
+    if (onSelectGame) {
+      onSelectGame();
+    }
   };
 
   return (
-    <aside className="w-full lg:w-72 xl:w-80 flex flex-col border-r border-slate-800 bg-[#090d16] h-[calc(100vh-53px)] select-none shrink-0 overflow-hidden">
+    <aside className="w-full lg:w-72 xl:w-80 flex flex-col border-r border-slate-800 bg-[#090d16] h-[calc(100vh-109px)] lg:h-[calc(100vh-53px)] select-none shrink-0 overflow-hidden">
       {/* Top Segmented Tabs: Move Tree vs Study Library */}
       <div className="flex border-b border-slate-800 bg-[#090d16] p-1.5 gap-1 shrink-0">
         <button

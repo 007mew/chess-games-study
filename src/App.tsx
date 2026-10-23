@@ -4,6 +4,7 @@ import { Header } from './components/Header';
 import { LeftColumn } from './components/LeftColumn/LeftColumn';
 import { MiddleColumn } from './components/MiddleColumn/MiddleColumn';
 import { StrategicNotebook } from './components/RightColumn/StrategicNotebook';
+import { MobileNavBar, MobileTab } from './components/MobileNavBar';
 import { ImportPgnModal } from './components/Modals/ImportPgnModal';
 import { ExportPgnModal } from './components/Modals/ExportPgnModal';
 import { HelpModal } from './components/Modals/HelpModal';
@@ -11,6 +12,7 @@ import { EditGameModal } from './components/Modals/EditGameModal';
 import { NewGameModal } from './components/Modals/NewGameModal';
 
 export const AppContent: React.FC = () => {
+  const [mobileTab, setMobileTab] = useState<MobileTab>('board');
   const [isImportOpen, setIsImportOpen] = useState(false);
   const [isExportOpen, setIsExportOpen] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
@@ -34,21 +36,49 @@ export const AppContent: React.FC = () => {
         onOpenEditGame={() => handleOpenEditGame()}
       />
 
-      {/* Main 3-Column Desktop Layout */}
-      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
+      {/* Main 3-Column Desktop Layout / Adaptive Mobile Views */}
+      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
         {/* Left Column: Library & Game Navigation (20-25%) */}
-        <LeftColumn
-          onOpenImport={() => setIsImportOpen(true)}
-          onOpenNewGame={() => setIsNewGameOpen(true)}
-          onOpenEditGame={handleOpenEditGame}
-        />
+        <div
+          className={`w-full lg:w-72 xl:w-80 shrink-0 ${
+            mobileTab === 'moves' || mobileTab === 'library'
+              ? 'flex flex-col'
+              : 'hidden lg:flex'
+          }`}
+        >
+          <LeftColumn
+            onOpenImport={() => setIsImportOpen(true)}
+            onOpenNewGame={() => setIsNewGameOpen(true)}
+            onOpenEditGame={handleOpenEditGame}
+            forceTab={mobileTab === 'library' ? 'library' : 'moves'}
+            onSelectGame={() => setMobileTab('board')}
+          />
+        </div>
 
         {/* Middle Column: Interactive Chessboard & Controls (45-50%) */}
-        <MiddleColumn />
+        <div
+          className={`flex-1 flex flex-col min-w-0 ${
+            mobileTab === 'board' ? 'flex' : 'hidden lg:flex'
+          }`}
+        >
+          <MiddleColumn
+            onOpenNotebook={() => setMobileTab('notebook')}
+            onOpenMoves={() => setMobileTab('moves')}
+          />
+        </div>
 
         {/* Right Column: Middlegame Strategic Notebook (30-35%) */}
-        <StrategicNotebook />
+        <div
+          className={`w-full lg:w-80 xl:w-96 shrink-0 ${
+            mobileTab === 'notebook' ? 'flex flex-col' : 'hidden lg:flex'
+          }`}
+        >
+          <StrategicNotebook />
+        </div>
       </div>
+
+      {/* Mobile Persistent Bottom Navigation Bar */}
+      <MobileNavBar activeTab={mobileTab} onSelectTab={setMobileTab} />
 
       {/* Modals */}
       <ImportPgnModal isOpen={isImportOpen} onClose={() => setIsImportOpen(false)} />

@@ -77,14 +77,14 @@ export const BoardControls: React.FC = () => {
   }, [prevMove, nextMove, firstMove, lastMove, toggleAutoPlay, flipBoard]);
 
   return (
-    <div className="w-full bg-[#090d16] border border-slate-800/80 rounded-xl p-2.5 flex items-center justify-between select-none shadow-md">
+    <div className="w-full bg-[#090d16] border border-slate-800/80 rounded-xl p-2 sm:p-2.5 flex items-center justify-between gap-1 sm:gap-2 select-none shadow-md overflow-x-auto">
       {/* Current Move & Turn Indicator */}
-      <div className="flex items-center space-x-2 text-xs">
-        <span className="font-mono bg-slate-900/90 px-2 py-1 rounded-md text-emerald-400 font-semibold border border-slate-800">
-          Ply {currentPly} / {totalMoves}
+      <div className="flex items-center space-x-1.5 sm:space-x-2 text-xs shrink-0">
+        <span className="font-mono bg-slate-900/90 px-1.5 sm:px-2 py-1 rounded-md text-emerald-400 font-semibold border border-slate-800 text-[11px] sm:text-xs">
+          Ply {currentPly}/{totalMoves}
         </span>
-        <span className="text-slate-400 hidden sm:inline">
-          {currentPly === 0 ? 'Starting Position' : `Move ${currentMoveNum} (${currentTurn})`}
+        <span className="text-slate-400 hidden md:inline">
+          {currentPly === 0 ? 'Start Position' : `Move ${currentMoveNum} (${currentTurn})`}
         </span>
       </div>
 

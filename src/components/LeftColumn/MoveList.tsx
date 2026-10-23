@@ -49,7 +49,7 @@ export const MoveList: React.FC = () => {
         </div>
       </div>
 
-      <div ref={containerRef} className="flex-1 overflow-y-auto p-2 space-y-0.5 text-xs font-mono select-none">
+      <div ref={containerRef} className="flex-1 overflow-y-auto p-2 pb-10 lg:pb-2 space-y-0.5 text-xs font-mono select-none">
         {/* Starting position row */}
         <div
           onClick={() => goToPly(0)}
